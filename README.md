@@ -5,7 +5,7 @@ Projeto criado em pyhton e mongoDB
 
 # **_Venda VA VR | Utilizando Python e mongoDB_**
 
-### **Criado para facilitar o calculo**
+### **CSalesVr 1.0.1**
 
 
 ### Projeto segue na versão Alpha 1.0.1.  
