@@ -16,7 +16,7 @@ Projeto criado em pyhton e mongoDB
 
 
 # Realese 1.0.1 
-  * Acrescentado Vendas Realizadas
+  * Vendas Realizadas
   * Numero
   * Layout
 
