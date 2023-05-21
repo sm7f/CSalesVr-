@@ -8,7 +8,7 @@ from component_function import con_data, cs_sifra
 # -------------------------------------------------------------------------------------------------------------------------
 janela = Tk()  
 janela.resizable(width=False, height=False)  
-janela.geometry('600x400')  
+janela.geometry('700x600')  
 janela.title('CSalesVr 1.0.1')  
 
 # --------------------------------------------------------------------------------------------------------------------------
@@ -89,10 +89,17 @@ calc_rec.grid(row=8, column=0, sticky="nsew")
 # Configurando o gerenciamento de geometria "grid"
 # Ajustando a largura das colunas
 janela.grid_columnconfigure(0, minsize=150, pad=10)
-janela.grid_columnconfigure(1, minsize=150, pad=10) 
+janela.grid_columnconfigure(1, minsize=150, pad=10)
+janela.grid_columnconfigure(2, minsize=150, pad=10)
+janela.grid_columnconfigure(3, minsize=150, pad=10)
+janela.grid_columnconfigure(4, minsize=150, pad=10)
+janela.grid_columnconfigure(5, minsize=150, pad=10)
+janela.grid_columnconfigure(6, minsize=150, pad=10)
+janela.grid_columnconfigure(7, minsize=150, pad=10)
 
 label1.grid(row=0, column=0, sticky="nsew")  
 label2.grid(row=0, column=1, sticky="nsew") 
+
 
 
 
