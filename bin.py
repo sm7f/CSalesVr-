@@ -1,7 +1,7 @@
 from tkinter import *  
 from pymongo import MongoClient
 from component_pop_up import calc_pop,gravar_pop,valor_pop,inserir_pop
-from component_database import calc_data
+from component_database import ins_data
 from component_function import con_data
 
 # ------------------------------- Janela ----------------------------------------------------------------------------------
@@ -27,11 +27,23 @@ label2 = Label(janela, text="Porcentagem")
 
 nome_t = Label(janela, text='Nome Cliente')
 nome_t.place(x=50, y=70)  # Posição
-nome_t.grid(row=4, column=0, sticky="nsew")  
+nome_t.grid(row=5, column=0, sticky="nsew")
+  
+numero_t = Label(janela, text='Número')
+numero_t.place(x=50, y=70)  # Posição
+numero_t.grid(row=7, column=0, sticky="nsew")  
 
 sobre_nt = Label(janela, text='Sobrenome') 
 sobre_nt.place(x=200, y=70)  # Posição
-sobre_nt.grid(row=4, column=1, sticky="nsew") 
+sobre_nt.grid(row=5, column=1, sticky="nsew")
+ 
+space = Label(janela, text='    ') 
+space.place(x=200, y=70)  # Posição
+space.grid(row=4, column=0, sticky="nsew") 
+
+space = Label(janela, text='    ') 
+space.place(x=200, y=70)  # Posição
+space.grid(row=4, column=1, sticky="nsew") 
 # --------------------------------------------------------------------------------------------------------------------------
 # ------------------------------- Display -----------------------------------------------------------------------------------
 
@@ -43,13 +55,19 @@ caixa2 = Entry(janela, justify="center")  # Display 1
 caixa2.place(x=200, y=70)  # Posição
 caixa2.grid(row=1, column=1, sticky="nsew")
 
+
+
+numero_ = Entry(janela, justify="center")  # Display 2
+numero_.place(x=50, y=70)  # Posição
+numero_.grid(row=7, column=1, sticky="nsew")
+
 nome_ = Entry(janela, justify="center")  # Display 2
 nome_.place(x=50, y=70)  # Posição
-nome_.grid(row=5, column=0, sticky="nsew")  
+nome_.grid(row=6, column=0, sticky="nsew")  
 
 sobre_n = Entry(janela, justify="center")  # Display 2
 sobre_n.place(x=200, y=70)  # Posição
-sobre_n.grid(row=5, column=1, sticky="nsew")
+sobre_n.grid(row=6, column=1, sticky="nsew")
  
 # ------------------------------- Resultados -------------------------------------------------------------------------------
 
@@ -101,6 +119,7 @@ def cd_cliente(vlr_receber, calc):
         # Selecionar a coleção
         colecao = db['DataBase']  # Insira o nome da coleção
 
+        nro = numero_.get()
         n3 = nome_.get()
         n4 = sobre_n.get()
 
@@ -110,6 +129,7 @@ def cd_cliente(vlr_receber, calc):
         if valor_pago is not None and valor_recebido is not None:
             # Criar um documento com os dados
             documento = {
+                'numero': nro,
                 'nome': n3,
                 'sobrenome': n4,
                 'valor pago': valor_pago,
@@ -139,7 +159,7 @@ btMt.grid(row=1, column=2, sticky="nsew")
 
 btn_cliente = Button(janela, text='Gravar', width=2, command=lambda: cd_cliente(vlr_receber, calc))
 btn_cliente.place(x=235, y=170)
-btn_cliente.grid(row=5, column=2, sticky="nsew")
+btn_cliente.grid(row=7, column=2, sticky="nsew")
 
 # Botão Limpar
 def limpar_info():
