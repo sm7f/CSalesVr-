@@ -136,15 +136,6 @@ btn_cliente = Button(janela, text='Gravar', width=2, command=lambda: cd_cliente(
 btn_cliente.place(x=235, y=170)
 btn_cliente.grid(row=5, column=2, sticky="nsew")
 
-# Botão Minimizar
-btn_minimize = Button(janela, text='Minimizar', width=10, command=lambda: janela.iconify())
-btn_minimize.place(x=20, y=170)
-btn_minimize.grid(row=7, column=0, sticky="nsew")
-
-# Botão Maximizar
-btn_maximize = Button(janela, text='Maximizar', width=10, command=lambda: janela.state('zoomed'))
-btn_maximize.place(x=110, y=170)
-btn_maximize.grid(row=7, column=1, sticky="nsew")
 
 # Botão Limpar
 def limpar_info():
