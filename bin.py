@@ -1,14 +1,14 @@
 from tkinter import *  
 from pymongo import MongoClient
 from component_pop_up import calc_pop,gravar_pop,valor_pop,inserir_pop
-from component_database import ins_data
+from database_utils import calcular_soma_valores, valor_somado
 from component_function import con_data, cs_sifra
 
 # ------------------------------- Janela ----------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------------------------------
 janela = Tk()  
 janela.resizable(width=False, height=False)  
-janela.geometry('400x200')  
+janela.geometry('600x400')  
 janela.title('CSalesVr 1.0.1')  
 
 # --------------------------------------------------------------------------------------------------------------------------
@@ -77,7 +77,11 @@ vlr_receber.grid(row=3, column=0, sticky="nsew")
 
 calc = Label(janela,text='-------------')  
 calc.place(x=100, y=102)  # Posição
-calc.grid(row=3, column=1, sticky="nsew")  
+calc.grid(row=3, column=1, sticky="nsew")
+
+calc_rec = Label(janela,text='')  
+calc_rec.place(x=100, y=102)  # Posição
+calc_rec.grid(row=8, column=0, sticky="nsew")  
 
 # --------------------------------------------------------------------------------------------------------------------------
 # ------------------------------- Configuração ----------------------------------------------------------------------------------
@@ -126,7 +130,7 @@ def cd_cliente(vlr_receber, calc):
         n4 = sobre_n.get()
 
         # Obter os valores de 'valor pago' e 'valor recebido' usando a função bt_Mt()
-        valor_pago, valor_recebido = bt_Mt(vlr_receber, calc)  # Passando os argumentos corretos
+        valor_pago, valor_recebido = bt_Mt(vlr_receber, calc)  # Passando os argumentos
 
         if valor_pago is not None and valor_recebido is not None:
             # Criar um documento com os dados
@@ -162,6 +166,10 @@ btMt.grid(row=1, column=2, sticky="nsew")
 btn_cliente = Button(janela, text='Gravar', width=2, command=lambda: cd_cliente(vlr_receber, calc))
 btn_cliente.place(x=235, y=170)
 btn_cliente.grid(row=7, column=2, sticky="nsew")
+
+btn_cliente = Button(janela, text='Vendas Realizadas', width=2, command=lambda: calcular_soma_valores(['valor pago']))
+btn_cliente.place(x=235, y=170)
+btn_cliente.grid(row=1, column=3, sticky="nsew")
 
 # Botão Limpar
 def limpar_info():
