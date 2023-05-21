@@ -122,7 +122,7 @@ def cd_cliente(vlr_receber, calc):
     except Exception as e:
         print('Erro durante a conexão ou operação:', e)
 
-# ----------------------------- Botões ----------------------------------------------------------------------------------
+# ----------------------------- Botões -----------------------------------------------------------------------------------
 # atribuindo função aos botões
 
 btMt = Button(janela, text='Calc', font='bold', width=4, command=lambda: bt_Mt(vlr_receber, calc))
