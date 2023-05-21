@@ -1,13 +1,15 @@
 from tkinter import *  
 from pymongo import MongoClient
-from component_pop_up import calc_pop,gravar_pop,valor_pop
+from component_pop_up import calc_pop,gravar_pop,valor_pop,inserir_pop
+from component_database import calc_data
+from component_function import con_data
 
 # ------------------------------- Janela ----------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------------------------------
 janela = Tk()  
 janela.resizable(width=False, height=False)  
 janela.geometry('400x200')  
-janela.title('Calcula Venda VR e VA')  
+janela.title('CSalesVr 1.0.1')  
 
 # --------------------------------------------------------------------------------------------------------------------------
 # ------------------------------- Informação -------------------------------------------------------------------------------
@@ -82,8 +84,8 @@ def bt_Mt(vlr_receber, calc):
         vlr_receber['text'] = n1 - float(calc['text'])
         return valor, float(calc['text'])
     except ValueError:
-        calc['text'] = 'Digite um valor'
-        vlr_receber['text'] = 'Digite um valor'
+        calc['text'] = valor_pop()
+        vlr_receber['text'] = valor_pop()
         return None, None
 
 
@@ -120,7 +122,7 @@ def cd_cliente(vlr_receber, calc):
             if resultado.inserted_id:
                 gravar_pop()
             else:
-                print('Erro ao inserir o documento')
+                inserir_pop()
         else:
             valor_pop()
 
@@ -139,15 +141,16 @@ btn_cliente = Button(janela, text='Gravar', width=2, command=lambda: cd_cliente(
 btn_cliente.place(x=235, y=170)
 btn_cliente.grid(row=5, column=2, sticky="nsew")
 
-
 # Botão Limpar
 def limpar_info():
+    
     caixa1.delete(0, END)
     caixa2.delete(0, END)
     nome_.delete(0, END)
     sobre_n.delete(0, END)
     vlr_receber['text'] = '-------------'
     calc['text'] = '-------------'
+
 
 btn_limpar = Button(janela, text='Limpar', width=10, command=limpar_info)
 btn_limpar.place(x=200, y=170)

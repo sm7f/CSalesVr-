@@ -6,7 +6,7 @@ def calc_pop():
 def gravar_pop():
     messagebox.showinfo("Enviando", "Dados inseridos com sucesso")
 def valor_pop():
-    messagebox.showinfo("Enviando", "Valor Invalido")
+    messagebox.showinfo("Enviando", "Valor Inválido")
 def inserir_pop():
     messagebox.showinfo("Enviando", "Erro ao inserir dado")
 
