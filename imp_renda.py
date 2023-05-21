@@ -21,33 +21,33 @@ v_2.grid(row=2, column=1, sticky="nsew")
 
 label1 = Label(janela, text="Valor Bruto")
 label2 = Label(janela, text="Porcentagem")
-# --------------------------------------------------------------------------------------------------------------------------
-# ------------------------------- Display -----------------------------------------------------------------------------------
 
-caixa1 = Entry(janela)  # Display 1
-caixa1.place(x=50, y=70)  # Posição
-caixa1.grid(row=1, column=0, sticky="nsew")
-
-caixa2 = Entry(janela, text='5%')  # Display 2
-caixa2.place(x=200, y=70)  # Posição
-caixa2.grid(row=1, column=1, sticky="nsew")
-
-nome_ = Entry(janela)  # Display 1
-nome_.place(x=50, y=70)  # Posição
-nome_.grid(row=5, column=0, sticky="nsew")  
-
-sobre_n = Entry(janela)  # Display 2
-sobre_n.place(x=200, y=70)  # Posição
-sobre_n.grid(row=5, column=1, sticky="nsew")
- 
-nome_t = Label(janela, text='Nome Cliente')  # Display 1
+nome_t = Label(janela, text='Nome Cliente')
 nome_t.place(x=50, y=70)  # Posição
 nome_t.grid(row=4, column=0, sticky="nsew")  
 
-sobre_nt = Label(janela, text='Sobrenome')  # Display 2
+sobre_nt = Label(janela, text='Sobrenome') 
 sobre_nt.place(x=200, y=70)  # Posição
 sobre_nt.grid(row=4, column=1, sticky="nsew") 
+# --------------------------------------------------------------------------------------------------------------------------
+# ------------------------------- Display -----------------------------------------------------------------------------------
 
+caixa1 = Entry(janela, justify="center")  # Display 1
+caixa1.place(x=50, y=70)  # Posição
+caixa1.grid(row=1, column=0, sticky="nsew")
+
+caixa2 = Entry(janela, justify="center")  # Display 1
+caixa2.place(x=200, y=70)  # Posição
+caixa2.grid(row=1, column=1, sticky="nsew")
+
+nome_ = Entry(janela, justify="center")  # Display 2
+nome_.place(x=50, y=70)  # Posição
+nome_.grid(row=5, column=0, sticky="nsew")  
+
+sobre_n = Entry(janela, justify="center")  # Display 2
+sobre_n.place(x=200, y=70)  # Posição
+sobre_n.grid(row=5, column=1, sticky="nsew")
+ 
 # ------------------------------- Resultados -------------------------------------------------------------------------------
 
 vlr_receber = Label (janela, text="-------------")
@@ -62,11 +62,14 @@ calc.grid(row=3, column=1, sticky="nsew")
 # ------------------------------- Configuração ----------------------------------------------------------------------------------
 
 # Configurando o gerenciamento de geometria "grid"
-janela.grid_columnconfigure(0, weight=1)  
-janela.grid_columnconfigure(1, weight=1)  
+# Ajustando a largura das colunas
+janela.grid_columnconfigure(0, minsize=150, pad=10)
+janela.grid_columnconfigure(1, minsize=150, pad=10) 
 
 label1.grid(row=0, column=0, sticky="nsew")  
 label2.grid(row=0, column=1, sticky="nsew") 
+
+
 
 # ------------------------------- Multiplicação ------------------------------------------------------------------------
 def bt_Mt(vlr_receber, calc):
@@ -125,11 +128,36 @@ def cd_cliente(vlr_receber, calc):
 # ----------------------------- Botões -----------------------------------------------------------------------------------
 # atribuindo função aos botões
 
-btMt = Button(janela, text='Calc', font='bold', width=4, command=lambda: bt_Mt(vlr_receber, calc))
+btMt = Button(janela, text='Calcular', width=2, command=lambda: bt_Mt(vlr_receber, calc))
 btMt.place(x=190, y=170)
+btMt.grid(row=1, column=2, sticky="nsew")
 
-btn_cliente = Button(janela, text='Salva', font='bold', width=4, command=lambda: cd_cliente(vlr_receber, calc))
+btn_cliente = Button(janela, text='Gravar', width=2, command=lambda: cd_cliente(vlr_receber, calc))
 btn_cliente.place(x=235, y=170)
+btn_cliente.grid(row=5, column=2, sticky="nsew")
+
+# Botão Minimizar
+btn_minimize = Button(janela, text='Minimizar', width=10, command=lambda: janela.iconify())
+btn_minimize.place(x=20, y=170)
+btn_minimize.grid(row=7, column=0, sticky="nsew")
+
+# Botão Maximizar
+btn_maximize = Button(janela, text='Maximizar', width=10, command=lambda: janela.state('zoomed'))
+btn_maximize.place(x=110, y=170)
+btn_maximize.grid(row=7, column=1, sticky="nsew")
+
+# Botão Limpar
+def limpar_info():
+    caixa1.delete(0, END)
+    caixa2.delete(0, END)
+    nome_.delete(0, END)
+    sobre_n.delete(0, END)
+    vlr_receber['text'] = '-------------'
+    calc['text'] = '-------------'
+
+btn_limpar = Button(janela, text='Limpar', width=10, command=limpar_info)
+btn_limpar.place(x=200, y=170)
+btn_limpar.grid(row=6, column=2, sticky="nsew")
 
 
 janela.mainloop()
