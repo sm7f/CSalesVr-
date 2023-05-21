@@ -2,7 +2,7 @@ from tkinter import *
 from pymongo import MongoClient
 from component_pop_up import calc_pop,gravar_pop,valor_pop,inserir_pop
 from component_database import ins_data
-from component_function import con_data
+from component_function import con_data, cs_sifra
 
 # ------------------------------- Janela ----------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------------------------------
@@ -98,9 +98,11 @@ def bt_Mt(vlr_receber, calc):
         n1 = float(caixa1.get())
         n2 = float(caixa2.get())
         valor = n1 * (n2 / 100)
-        calc['text'] = n1 - valor
-        vlr_receber['text'] = n1 - float(calc['text'])
-        return valor, float(calc['text'])
+        calc_value = "${:.2f}".format(n1 - valor)
+        calc['text'] = calc_value
+        vlr_receber_value = "${:.2f}".format(valor)
+        vlr_receber['text'] = vlr_receber_value
+        return valor, float(calc_value[1:])
     except ValueError:
         calc['text'] = valor_pop()
         vlr_receber['text'] = valor_pop()
