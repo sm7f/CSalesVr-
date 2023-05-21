@@ -1,47 +1,48 @@
 from tkinter import *  
 from pymongo import MongoClient
-from component_pop_up import calc_pop,gravar_pop,valor_pop,inserir_pop
-from database_utils import calcular_soma_valores, valor_somado
+from component_pop_up import gravar_pop,valor_pop,inserir_pop
+from database_utils import calcular_soma_valores
 from component_function import con_data, cs_sifra
 
 # ------------------------------- Janela ----------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------------------------------
 janela = Tk()  
 janela.resizable(width=False, height=False)  
-janela.geometry('700x600')  
+janela.geometry('600x350')  
 janela.title('CSalesVr 1.0.1')  
+janela.configure(bg='dim gray')
 
 # --------------------------------------------------------------------------------------------------------------------------
 # ------------------------------- Informação -------------------------------------------------------------------------------
 
-v_1 = Label (janela, text="Valor Pago")
+v_1 = Label (janela, text="Valor Pago", bd=1, relief='solid', padx=5, pady=5)
 v_1.place(x=1, y=50)  # Posição
 v_1.grid(row=2, column=0, sticky="nsew")  
 
-v_2 = Label(janela,text='Valor Recebido')  
+v_2 = Label(janela,text='Valor Recebido', bd=1, relief='solid', padx=5, pady=5)  
 v_2.place(x=100, y=102)  # Posição
 v_2.grid(row=2, column=1, sticky="nsew")  
 
-label1 = Label(janela, text="Valor Bruto")
-label2 = Label(janela, text="Porcentagem")
+label1 = Label(janela, text="Valor Bruto", bd=1, relief='solid', padx=5, pady=5)
+label2 = Label(janela, text="Porcentagem", bd=1, relief='solid', padx=5, pady=5)
 
-nome_t = Label(janela, text='Nome Cliente')
+nome_t = Label(janela, text='Nome Cliente', bd=1, relief='solid', padx=5, pady=5)
 nome_t.place(x=50, y=70)  # Posição
 nome_t.grid(row=5, column=0, sticky="nsew")
   
-numero_t = Label(janela, text='Número')
+numero_t = Label(janela, text='Número', bd=1, relief='solid', padx=5, pady=5)
 numero_t.place(x=50, y=70)  # Posição
 numero_t.grid(row=7, column=0, sticky="nsew")  
 
-sobre_nt = Label(janela, text='Sobrenome') 
+sobre_nt = Label(janela, text='Sobrenome', bd=1, relief='solid', padx=5, pady=5) 
 sobre_nt.place(x=200, y=70)  # Posição
 sobre_nt.grid(row=5, column=1, sticky="nsew")
  
-space = Label(janela, text='    ') 
+space = Label(janela, text='    ',bg='dim gray') 
 space.place(x=200, y=70)  # Posição
 space.grid(row=4, column=0, sticky="nsew") 
 
-space = Label(janela, text='    ') 
+space = Label(janela, text='    ',bg='dim gray') 
 space.place(x=200, y=70)  # Posição
 space.grid(row=4, column=1, sticky="nsew") 
 # --------------------------------------------------------------------------------------------------------------------------
@@ -49,39 +50,35 @@ space.grid(row=4, column=1, sticky="nsew")
 
 caixa1 = Entry(janela, justify="center")  # Display 1
 caixa1.place(x=50, y=70)  # Posição
-caixa1.grid(row=1, column=0, sticky="nsew")
+caixa1.grid(row=1, column=0, sticky="nsew", padx=1, pady=1)
 
 caixa2 = Entry(janela, justify="center")  # Display 1
 caixa2.place(x=200, y=70)  # Posição
-caixa2.grid(row=1, column=1, sticky="nsew")
+caixa2.grid(row=1, column=1, sticky="nsew", padx=1, pady=1)
 
 
 
 numero_ = Entry(janela, justify="center")  # Display 2
-numero_.place(x=50, y=70)  # Posição
-numero_.grid(row=7, column=1, sticky="nsew")
+numero_.grid(row=9, column=0, sticky="nsew", padx=1, pady=1)
 
 nome_ = Entry(janela, justify="center")  # Display 2
 nome_.place(x=50, y=70)  # Posição
-nome_.grid(row=6, column=0, sticky="nsew")  
+nome_.grid(row=6, column=0, sticky="nsew", padx=1, pady=1)  
 
 sobre_n = Entry(janela, justify="center")  # Display 2
 sobre_n.place(x=200, y=70)  # Posição
-sobre_n.grid(row=6, column=1, sticky="nsew")
+sobre_n.grid(row=6, column=1, sticky="nsew", padx=1, pady=1)
  
 # ------------------------------- Resultados -------------------------------------------------------------------------------
 
-vlr_receber = Label (janela, text="-------------")
+vlr_receber = Label (janela, text="-------------", bd=1, relief='solid')
 vlr_receber.place(x=1, y=50)  # Posição
 vlr_receber.grid(row=3, column=0, sticky="nsew") 
 
-calc = Label(janela,text='-------------')  
+calc = Label(janela,text='-------------', bd=1, relief='solid')  
 calc.place(x=100, y=102)  # Posição
 calc.grid(row=3, column=1, sticky="nsew")
 
-calc_rec = Label(janela,text='')  
-calc_rec.place(x=100, y=102)  # Posição
-calc_rec.grid(row=8, column=0, sticky="nsew")  
 
 # --------------------------------------------------------------------------------------------------------------------------
 # ------------------------------- Configuração ----------------------------------------------------------------------------------
@@ -165,18 +162,18 @@ def cd_cliente(vlr_receber, calc):
 # ----------------------------- Botões -----------------------------------------------------------------------------------
 # atribuindo função aos botões
 
-btMt = Button(janela, text='Calcular', width=2, command=lambda: bt_Mt(vlr_receber, calc))
+btMt = Button(janela, text='Calcular', bd=1, relief='solid', width=2, command=lambda: bt_Mt(vlr_receber, calc))
 btMt.place(x=190, y=170)
-btMt.grid(row=1, column=2, sticky="nsew")
+btMt.grid(row=0, column=2, sticky="nsew")
 
 
-btn_cliente = Button(janela, text='Gravar', width=2, command=lambda: cd_cliente(vlr_receber, calc))
+btn_cliente = Button(janela, text='Gravar', width=2, bd=1, relief='solid', command=lambda: cd_cliente(vlr_receber, calc))
 btn_cliente.place(x=235, y=170)
-btn_cliente.grid(row=7, column=2, sticky="nsew")
+btn_cliente.grid(row=5, column=3, sticky="nsew")
 
-btn_cliente = Button(janela, text='Vendas Realizadas', width=2, command=lambda: calcular_soma_valores(['valor pago']))
+btn_cliente = Button(janela, text='Vendas Realizadas', width=2, bd=1, relief='solid', command=lambda: calcular_soma_valores(['valor pago']))
 btn_cliente.place(x=235, y=170)
-btn_cliente.grid(row=1, column=3, sticky="nsew")
+btn_cliente.grid(row=0, column=3, sticky="nsew")
 
 # Botão Limpar
 def limpar_info():
@@ -190,9 +187,9 @@ def limpar_info():
     calc['text'] = '-------------'
 
 
-btn_limpar = Button(janela, text='Limpar', width=10, command=limpar_info)
+btn_limpar = Button(janela, text='Limpar', width=10, bd=1, relief='solid' ,command=limpar_info)
 btn_limpar.place(x=200, y=170)
-btn_limpar.grid(row=6, column=2, sticky="nsew")
+btn_limpar.grid(row=5, column=2, sticky="nsew")
 
 
 janela.mainloop()
