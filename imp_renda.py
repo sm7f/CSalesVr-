@@ -1,6 +1,6 @@
 from tkinter import *  
 from pymongo import MongoClient
-from component_pop_up import calc_pop,gravar_pop
+from component_pop_up import calc_pop,gravar_pop,valor_pop
 
 # ------------------------------- Janela ----------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------------------------------
@@ -122,7 +122,7 @@ def cd_cliente(vlr_receber, calc):
             else:
                 print('Erro ao inserir o documento')
         else:
-            print('Valor inválido')
+            valor_pop()
 
     except Exception as e:
         print('Erro durante a conexão ou operação:', e)
