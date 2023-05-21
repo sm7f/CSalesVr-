@@ -1,5 +1,6 @@
 from tkinter import *  
 from pymongo import MongoClient
+from component_pop_up import calc_pop,gravar_pop
 
 # ------------------------------- Janela ----------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------------------------------
@@ -85,6 +86,7 @@ def bt_Mt(vlr_receber, calc):
         vlr_receber['text'] = 'Digite um valor'
         return None, None
 
+
 # ------------------------------- Cadastra Cliente -------------------------------------------------------------------------       
 def cd_cliente(vlr_receber, calc):
     try:
@@ -116,7 +118,7 @@ def cd_cliente(vlr_receber, calc):
             resultado = colecao.insert_one(documento)
 
             if resultado.inserted_id:
-                print('Documento inserido com sucesso')
+                gravar_pop()
             else:
                 print('Erro ao inserir o documento')
         else:
@@ -131,6 +133,7 @@ def cd_cliente(vlr_receber, calc):
 btMt = Button(janela, text='Calcular', width=2, command=lambda: bt_Mt(vlr_receber, calc))
 btMt.place(x=190, y=170)
 btMt.grid(row=1, column=2, sticky="nsew")
+
 
 btn_cliente = Button(janela, text='Gravar', width=2, command=lambda: cd_cliente(vlr_receber, calc))
 btn_cliente.place(x=235, y=170)
