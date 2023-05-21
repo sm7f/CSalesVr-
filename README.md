@@ -15,8 +15,8 @@ Projeto criado em pyhton e mongoDB
 <img align="center" width="500px" height="300px" src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExNTQ1MDg4YTU1MWRlMjY2NzAwZjA3ZTZiYTFkODU1M2ZkZDQ5ZGMxOSZlcD12MV9pbnRlcm5hbF9naWZzX2dpZklkJmN0PWc/BSoizPMGROlW49Uqqx/giphy.gif">
 
 
-Realese 1.0.1 
-# Acrescentado Vendas Realizadas
-# Numero
-# Layout
+# Realese 1.0.1 
+  * Acrescentado Vendas Realizadas
+  * Numero
+  * Layout
 
