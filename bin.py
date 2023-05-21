@@ -168,6 +168,7 @@ def limpar_info():
     caixa2.delete(0, END)
     nome_.delete(0, END)
     sobre_n.delete(0, END)
+    numero_.delete(0, END)
     vlr_receber['text'] = '-------------'
     calc['text'] = '-------------'
 
