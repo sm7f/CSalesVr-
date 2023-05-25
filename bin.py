@@ -2,7 +2,9 @@ from tkinter import *
 from pymongo import MongoClient
 from component_pop_up import gravar_pop,valor_pop,inserir_pop
 from database_utils import calcular_soma_valores
-from component_function import con_data, cs_sifra
+from graficos import mostrar_grafico
+from datetime import datetime
+
 
 # ------------------------------- Janela ----------------------------------------------------------------------------------
 # -------------------------------------------------------------------------------------------------------------------------
@@ -133,6 +135,8 @@ def cd_cliente(vlr_receber, calc):
         n3 = nome_.get()
         n4 = sobre_n.get()
 
+        data_hora_atual = datetime.now()
+
         # Obter os valores de 'valor pago' e 'valor recebido' usando a função bt_Mt()
         valor_pago, valor_recebido = bt_Mt(vlr_receber, calc)  # Passando os argumentos
 
@@ -143,7 +147,9 @@ def cd_cliente(vlr_receber, calc):
                 'nome': n3,
                 'sobrenome': n4,
                 'valor pago': valor_pago,
-                'valor recebido': valor_recebido
+                'valor recebido': valor_recebido,
+                'data e hora': data_hora_atual
+
             }
 
             # Inserir o documento na coleção
@@ -174,6 +180,10 @@ btn_cliente.grid(row=5, column=3, sticky="nsew")
 btn_cliente = Button(janela, text='Vendas Realizadas', width=2, bd=1, relief='solid', command=lambda: calcular_soma_valores(['valor pago']))
 btn_cliente.place(x=235, y=170)
 btn_cliente.grid(row=0, column=3, sticky="nsew")
+
+btn_cliente = Button(janela, text='Relatório', width=2, bd=1, relief='solid', command= lambda: mostrar_grafico())
+btn_cliente.place(x=235, y=170)
+btn_cliente.grid(row=1, column=3, sticky="nsew")
 
 # Botão Limpar
 def limpar_info():
