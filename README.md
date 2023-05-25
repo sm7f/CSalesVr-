@@ -1,7 +1,7 @@
 
 Projeto criado em pyhton e mongoDB
 
-# Projeto-Venda-VA-VR
+# Projeto PDV VA
 
 # **_Venda VA VR | Utilizando Python e mongoDB_**
 
