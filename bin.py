@@ -1,9 +1,23 @@
-from tkinter import *  
+from tkinter import *
+from tkinter import messagebox
+from pydantic import FilePath  
 from pymongo import MongoClient
-from component_pop_up import gravar_pop,valor_pop,inserir_pop
+from yaml import DocumentEndEvent
+from component_pop_up import gravar_pop,valor_pop,inserir_pop,numero_invalido_pop,numero_repetido_pop
 from database_utils import calcular_soma_valores
 from graficos import mostragrafico
 from datetime import datetime
+import pdfkit
+import os
+import subprocess
+import webbrowser
+from component_function import open_html_file
+
+
+
+
+
+
 
 
 # ------------------------------- Janela ----------------------------------------------------------------------------------
@@ -99,9 +113,6 @@ janela.grid_columnconfigure(7, minsize=150, pad=10)
 label1.grid(row=0, column=0, sticky="nsew")  
 label2.grid(row=0, column=1, sticky="nsew") 
 
-
-
-
 # ------------------------------- Calc --------------------------------------------------------------------------------------
 def bt_Mt(vlr_receber, calc):
     try:
@@ -120,10 +131,21 @@ def bt_Mt(vlr_receber, calc):
 
 
 # ------------------------------- Cadastra Cliente -------------------------------------------------------------------------       
+def vender():
+    # Chamar a função cd_cliente
+    documento = cd_cliente(vlr_receber, calc)
+
+    # Chamar a função gerar_html
+    html = gerar_html(documento)
+
+    # Salvar o comprovante em formato HTML
+    file_path = 'Comprovante/operacao.html'
+    gerar_html_file(html, file_path)
+
 def cd_cliente(vlr_receber, calc):
     try:
         # Conectar ao banco de dados
-        client = MongoClient('mongodb://localhost:27017/', 27017)  # Insira o host e a porta do MongoDB
+        client = MongoClient('mongodb://localhost:27017/')  # Insira o host e a porta do MongoDB
 
         # Selecionar o banco de dados
         db = client['DataBase']  # Insira o nome do banco de dados
@@ -137,6 +159,18 @@ def cd_cliente(vlr_receber, calc):
 
         data_hora_atual = datetime.now()
 
+        # Verificar se o número já está em uso
+        if colecao.find_one({'numero': nro}):
+            # Número já existe na coleção
+            numero_repetido_pop()
+            return
+
+        # Verificar o comprimento do número
+        if len(nro) != 11:
+            # Número inválido
+            numero_invalido_pop()
+            return
+
         # Obter os valores de 'valor pago' e 'valor recebido' usando a função bt_Mt()
         valor_pago, valor_recebido = bt_Mt(vlr_receber, calc)  # Passando os argumentos
 
@@ -149,7 +183,6 @@ def cd_cliente(vlr_receber, calc):
                 'valor pago': valor_pago,
                 'valor recebido': valor_recebido,
                 'data e hora': data_hora_atual
-
             }
 
             # Inserir o documento na coleção
@@ -157,15 +190,106 @@ def cd_cliente(vlr_receber, calc):
 
             if resultado.inserted_id:
                 gravar_pop()
+                gerar_html_and_confirm(documento)
             else:
                 inserir_pop()
         else:
             valor_pop()
 
+        return documento
+
     except Exception as e:
         print('Erro durante a conexão ou operação:', e)
-# ------------------------------- Atualiza -------------------------------------------------------------------------
 
+
+def gerar_html(documento):
+    campos_necessarios = ['numero', 'nome', 'sobrenome', 'valor pago', 'valor recebido', 'data e hora']
+    if not all(campo in documento for campo in campos_necessarios):
+        print("Documento inválido. Campos necessários ausentes.")
+        return None
+
+    html = '''
+    <html>
+    <head>
+        <style>
+            table {{
+                border-collapse: collapse;
+                width: 100%;
+            }}
+            th, td {{
+                text-align: left;
+                padding: 8px;
+                border-bottom: 1px solid #ddd;
+            }}
+        </style>
+    </head>
+    <body>
+        <h2>Detalhes da Operação</h2>
+        <table>
+            <tr>
+                <th>Número</th>
+                <th>Nome</th>
+                <th>Sobrenome</th>
+                <th>Valor Pago</th>
+                <th>Valor Recebido</th>
+                <th>Data e Hora</th>
+            </tr>
+            <tr>
+                <td>{0}</td>
+                <td>{1}</td>
+                <td>{2}</td>
+                <td>{3}</td>
+                <td>{4}</td>
+                <td>{5}</td>
+            </tr>
+        </table>
+        <button onclick="window.print()">Imprimir</button> <!-- Botão para imprimir -->
+    </body>
+    </html>
+    '''.format(documento['numero'], documento['nome'], documento['sobrenome'], documento['valor pago'],
+               documento['valor recebido'], documento['data e hora'])
+
+    return html
+
+
+
+def gerar_html_file(html, file_path):
+    directory = os.path.dirname(file_path)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    print(f"Diretório do arquivo: {directory}")  # Exibe o diretório do arquivo
+
+    with open(file_path, 'w') as file:
+        file.write(html)
+    print(f"Comprovante salvo em {file_path}")
+
+
+def gerar_html_and_confirm(documento):
+    directory = 'Comprovante'  # Diretório onde o arquivo será salvo
+    file_name = 'operacao.html'
+    file_path = os.path.join(directory, file_name)
+
+    html = gerar_html(documento)
+    gerar_html_file(html, file_path)
+
+    # Exibir caixa de diálogo para confirmar a geração do arquivo HTML
+    result = messagebox.askquestion("Confirmação", "Deseja imprimir o comprovante ?")
+    if result == 'yes':
+        # Obter o caminho absoluto do diretório
+        abs_directory = os.path.abspath(directory)
+
+        # Obter o caminho completo do arquivo
+        abs_file_path = os.path.join(abs_directory, file_name)
+
+        # Abrir o arquivo HTML no navegador padrão (Brave)
+        webbrowser.open(f"file://{abs_file_path}")
+
+def open_html_with_brave(file_path):
+    command = f'Start-Process -FilePath "brave.exe" -ArgumentList "{file_path}"'
+    subprocess.run(['powershell', '-Command', command])
+
+# ------------------------------- Atualizar -------------------------------------------------------------------------
 
 def atualizar_cliente(vlr_receber, calc):
     try:
@@ -245,6 +369,18 @@ def atualizar_cliente(vlr_receber, calc):
         print('Ocorreu um erro:', str(e))
 
 
+def abrir_arquivo_html_no_navegador(file_path):
+    webbrowser.open(file_path, new=2)
+
+    file_path = 'Comprovante/operacao.html'
+    abrir_arquivo_html_no_navegador(file_path)
+
+
+btn_cliente = Button(janela, text='Vender', width=2, bd=1, relief='solid', command=vender)
+btn_cliente.place(x=235, y=170)
+btn_cliente.grid(row=5, column=3, sticky="nsew")
+
+
 
 # ----------------------------- Botões -----------------------------------------------------------------------------------
 # atribuindo função aos botões
@@ -252,11 +388,6 @@ def atualizar_cliente(vlr_receber, calc):
 btMt = Button(janela, text='Calcular', bd=1, relief='solid', width=2, command=lambda: bt_Mt(vlr_receber, calc))
 btMt.place(x=190, y=170)
 btMt.grid(row=0, column=2, sticky="nsew")
-
-
-btn_cliente = Button(janela, text='Gravar', width=2, bd=1, relief='solid', command=lambda: cd_cliente(vlr_receber, calc))
-btn_cliente.place(x=235, y=170)
-btn_cliente.grid(row=5, column=3, sticky="nsew")
 
 btn_cliente = Button(janela, text='Vendas Realizadas', width=2, bd=1, relief='solid', command=lambda: calcular_soma_valores(['valor pago']))
 btn_cliente.place(x=235, y=170)
@@ -267,9 +398,14 @@ btn_relatorio = Button(janela, text='Relatório', width=2, bd=1, relief='solid',
 btn_relatorio.place(x=235, y=170)
 btn_relatorio.grid(row=1, column=3, sticky="nsew")
 
-btn_atualizar = Button(janela, text='Atualizar Cliente', width=2, bd=1, relief='solid', command=lambda: atualizar_cliente(vlr_receber, calc))
+btn_atualizar = Button(janela, text='Nova Venda', width=2, bd=1, relief='solid', command=lambda: atualizar_cliente(vlr_receber, calc))
 btn_atualizar.place(x=280, y=170)
 btn_atualizar.grid(row=6, column=3, sticky="nsew")
+
+btn_atualizar = Button(janela, text='Comprovante', width=2, bd=1, relief='solid', command=lambda:open_html_file())
+btn_atualizar.place(x=280, y=170)
+btn_atualizar.grid(row=7, column=3, sticky="nsew")
+
 # Botão Limpar
 def limpar_info():
     

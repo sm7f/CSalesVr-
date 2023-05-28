@@ -10,5 +10,9 @@ def valor_pop():
     messagebox.showinfo("Enviando", "Valor Inválido")
 def inserir_pop():
     messagebox.showinfo("Enviando", "Erro ao inserir dado")
+def numero_repetido_pop():
+    messagebox.showinfo("Enviando", "Já existe um cadastro com esse CPF")
+def numero_invalido_pop():
+    messagebox.showinfo("Enviando", "CPF Inválido")
 
 

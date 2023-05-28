@@ -5,6 +5,7 @@ from database_utils import valor_somado
 
 
 
+
 def mostragrafico():
     try:
         # Conectar ao banco de dados MongoDB
