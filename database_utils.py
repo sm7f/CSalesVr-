@@ -30,3 +30,5 @@ def calcular_soma_valores(campos):
 
     except Exception as e:
         print('Erro durante a conexão ou operação:', e)
+
+

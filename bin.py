@@ -2,7 +2,7 @@ from tkinter import *
 from pymongo import MongoClient
 from component_pop_up import gravar_pop,valor_pop,inserir_pop
 from database_utils import calcular_soma_valores
-from graficos import mostrar_grafico
+from graficos import mostragrafico
 from datetime import datetime
 
 
@@ -164,6 +164,87 @@ def cd_cliente(vlr_receber, calc):
 
     except Exception as e:
         print('Erro durante a conexão ou operação:', e)
+# ------------------------------- Atualiza -------------------------------------------------------------------------
+
+
+def atualizar_cliente(vlr_receber, calc):
+    try:
+        # Conectar ao banco de dados
+        client = MongoClient('mongodb://localhost:27017/')  # Insira o host e a porta do MongoDB
+
+        # Selecionar o banco de dados
+        db = client['DataBase']  # Insira o nome do banco de dados
+
+        # Selecionar as coleções
+        colecao_clientes = db['DataBase']  # Insira o nome da coleção de clientes
+        colecao_registros = db['Registros']  # Insira o nome da coleção de registros
+
+        nro = numero_.get()
+        n3 = nome_.get()
+        n4 = sobre_n.get()
+
+        data_hora_atual = datetime.now()
+
+        # Consultar o valor atual do campo 'valor pago' do cliente
+        cliente = colecao_clientes.find_one({'numero': nro})
+        valor_pago_atual = cliente.get('valor pago', 0)
+
+        # Obter os valores de 'valor pago' e 'valor recebido' usando a função bt_Mt()
+        valor_pago, valor_recebido = bt_Mt(vlr_receber, calc)  # Passando os argumentos
+
+        if valor_pago is not None and valor_recebido is not None:
+            # Somar o novo valor pago ao valor atual
+            novo_valor_pago = valor_pago_atual + valor_pago
+
+            # Criar o dicionário com os campos a serem atualizados no cliente
+            update_fields_cliente = {
+                'valor pago': novo_valor_pago,
+                'valor recebido': valor_recebido,
+                'data e hora': data_hora_atual
+            }
+
+            # Verificar se o campo 'nome' não está em branco antes de incluí-lo no dicionário de atualização do cliente
+            if n3.strip():
+                update_fields_cliente['nome'] = n3
+
+            # Atualizar os dados do cliente no banco de dados
+            resultado = colecao_clientes.update_one(
+                {'numero': nro},
+                {'$set': update_fields_cliente}
+            )
+
+            if resultado.modified_count > 0:
+                # Criar o documento de registro
+                registro = {
+                    'valor pago': valor_pago,
+                    'valor recebido': valor_recebido,
+                    'data e hora': data_hora_atual,
+                    'cliente': cliente['_id']  # Incluir a referência ao cliente correspondente
+                }
+
+                # Inserir o registro na coleção de registros
+                colecao_registros.insert_one(registro)
+
+                # Calcular o valor total do valor pago
+                pipeline_pago = [
+                    {'$group': {'_id': {'$dateToString': {'format': '%Y-%m-%d', 'date': '$data e hora'}}, 'total_pago': {'$sum': '$valor pago'}}},
+                    {'$group': {'_id': None, 'total_valor_pago': {'$sum': '$total_pago'}}}
+                ]
+                total_valor_pago = colecao_registros.aggregate(pipeline_pago).next()['total_valor_pago']
+
+                # Atualizar o valor total de valor recebido e valor pago no registro
+                colecao_registros.update_many({}, {'$set': {'total_valor_pago': total_valor_pago}})
+
+                gravar_pop()
+            else:
+                inserir_pop()
+        else:
+            valor_pop()
+    except Exception as e:
+        # Lidar com exceção (opcional)
+        print('Ocorreu um erro:', str(e))
+
+
 
 # ----------------------------- Botões -----------------------------------------------------------------------------------
 # atribuindo função aos botões
@@ -181,10 +262,14 @@ btn_cliente = Button(janela, text='Vendas Realizadas', width=2, bd=1, relief='so
 btn_cliente.place(x=235, y=170)
 btn_cliente.grid(row=0, column=3, sticky="nsew")
 
-btn_cliente = Button(janela, text='Relatório', width=2, bd=1, relief='solid', command= lambda: mostrar_grafico())
-btn_cliente.place(x=235, y=170)
-btn_cliente.grid(row=1, column=3, sticky="nsew")
 
+btn_relatorio = Button(janela, text='Relatório', width=2, bd=1, relief='solid', command=mostragrafico)
+btn_relatorio.place(x=235, y=170)
+btn_relatorio.grid(row=1, column=3, sticky="nsew")
+
+btn_atualizar = Button(janela, text='Atualizar Cliente', width=2, bd=1, relief='solid', command=lambda: atualizar_cliente(vlr_receber, calc))
+btn_atualizar.place(x=280, y=170)
+btn_atualizar.grid(row=6, column=3, sticky="nsew")
 # Botão Limpar
 def limpar_info():
     
