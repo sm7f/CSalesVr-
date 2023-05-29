@@ -26,7 +26,7 @@ def mostragrafico():
 
         # Calcular o valor somado e o lucro total
         valor_somado = sum(valores_pagos)
-        lucro_total = valor_somado   # Exemplo de cálculo de lucro (20% do valor somado)
+        lucro_total = valor_somado
 
         # Criar o gráfico de barras
         plt.figure()

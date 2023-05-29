@@ -2,7 +2,6 @@ from tkinter import *
 from tkinter import messagebox
 from pydantic import FilePath  
 from pymongo import MongoClient
-from yaml import DocumentEndEvent
 from component_pop_up import gravar_pop,valor_pop,inserir_pop,numero_invalido_pop,numero_repetido_pop
 from database_utils import calcular_soma_valores
 from graficos import mostragrafico
@@ -124,10 +123,14 @@ def bt_Mt(vlr_receber, calc):
         vlr_receber_value = "${:.2f}".format(valor)
         vlr_receber['text'] = vlr_receber_value
         return valor, float(calc_value[1:])
+        
+    
     except ValueError:
         calc['text'] = valor_pop()
         vlr_receber['text'] = valor_pop()
         return None, None
+    
+    
 
 
 # ------------------------------- Cadastra Cliente -------------------------------------------------------------------------       
@@ -276,18 +279,8 @@ def gerar_html_and_confirm(documento):
     # Exibir caixa de diálogo para confirmar a geração do arquivo HTML
     result = messagebox.askquestion("Confirmação", "Deseja imprimir o comprovante ?")
     if result == 'yes':
-        # Obter o caminho absoluto do diretório
-        abs_directory = os.path.abspath(directory)
+        return open_html_file()
 
-        # Obter o caminho completo do arquivo
-        abs_file_path = os.path.join(abs_directory, file_name)
-
-        # Abrir o arquivo HTML no navegador padrão (Brave)
-        webbrowser.open(f"file://{abs_file_path}")
-
-def open_html_with_brave(file_path):
-    command = f'Start-Process -FilePath "brave.exe" -ArgumentList "{file_path}"'
-    subprocess.run(['powershell', '-Command', command])
 
 # ------------------------------- Atualizar -------------------------------------------------------------------------
 
@@ -305,7 +298,6 @@ def atualizar_cliente(vlr_receber, calc):
 
         nro = numero_.get()
         n3 = nome_.get()
-        n4 = sobre_n.get()
 
         data_hora_atual = datetime.now()
 
@@ -367,13 +359,6 @@ def atualizar_cliente(vlr_receber, calc):
     except Exception as e:
         # Lidar com exceção (opcional)
         print('Ocorreu um erro:', str(e))
-
-
-def abrir_arquivo_html_no_navegador(file_path):
-    webbrowser.open(file_path, new=2)
-
-    file_path = 'Comprovante/operacao.html'
-    abrir_arquivo_html_no_navegador(file_path)
 
 
 btn_cliente = Button(janela, text='Vender', width=2, bd=1, relief='solid', command=vender)
