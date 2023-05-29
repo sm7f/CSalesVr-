@@ -10,7 +10,7 @@ import pdfkit
 import os
 import subprocess
 import webbrowser
-from component_function import open_html_file
+from component_function import open_html_file, create_table,create_table
 
 
 
@@ -49,10 +49,6 @@ numero_t = Label(janela, text='Número', bd=1, relief='solid', padx=5, pady=5)
 numero_t.place(x=50, y=70)  # Posição
 numero_t.grid(row=7, column=0, sticky="nsew")  
 
-sobre_nt = Label(janela, text='Sobrenome', bd=1, relief='solid', padx=5, pady=5) 
-sobre_nt.place(x=200, y=70)  # Posição
-sobre_nt.grid(row=5, column=1, sticky="nsew")
- 
 space = Label(janela, text='    ',bg='dim gray') 
 space.place(x=200, y=70)  # Posição
 space.grid(row=4, column=0, sticky="nsew") 
@@ -80,9 +76,6 @@ nome_ = Entry(janela, justify="center")  # Display 2
 nome_.place(x=50, y=70)  # Posição
 nome_.grid(row=6, column=0, sticky="nsew", padx=1, pady=1)  
 
-sobre_n = Entry(janela, justify="center")  # Display 2
-sobre_n.place(x=200, y=70)  # Posição
-sobre_n.grid(row=6, column=1, sticky="nsew", padx=1, pady=1)
  
 # ------------------------------- Resultados -------------------------------------------------------------------------------
 
@@ -156,9 +149,11 @@ def cd_cliente(vlr_receber, calc):
         # Selecionar a coleção
         colecao = db['DataBase']  # Insira o nome da coleção
 
+        vendas_collection = db["Vendas"]
+
         nro = numero_.get()
         n3 = nome_.get()
-        n4 = sobre_n.get()
+        
 
         data_hora_atual = datetime.now()
 
@@ -182,7 +177,6 @@ def cd_cliente(vlr_receber, calc):
             documento = {
                 'numero': nro,
                 'nome': n3,
-                'sobrenome': n4,
                 'valor pago': valor_pago,
                 'valor recebido': valor_recebido,
                 'data e hora': data_hora_atual
@@ -190,6 +184,7 @@ def cd_cliente(vlr_receber, calc):
 
             # Inserir o documento na coleção
             resultado = colecao.insert_one(documento)
+            resultado = vendas_collection.insert_one(documento)
 
             if resultado.inserted_id:
                 gravar_pop()
@@ -206,7 +201,7 @@ def cd_cliente(vlr_receber, calc):
 
 
 def gerar_html(documento):
-    campos_necessarios = ['numero', 'nome', 'sobrenome', 'valor pago', 'valor recebido', 'data e hora']
+    campos_necessarios = ['numero', 'nome', 'valor pago', 'valor recebido', 'data e hora']
     if not all(campo in documento for campo in campos_necessarios):
         print("Documento inválido. Campos necessários ausentes.")
         return None
@@ -230,9 +225,8 @@ def gerar_html(documento):
         <h2>Detalhes da Operação</h2>
         <table>
             <tr>
-                <th>Número</th>
+                <th>CPF</th>
                 <th>Nome</th>
-                <th>Sobrenome</th>
                 <th>Valor Pago</th>
                 <th>Valor Recebido</th>
                 <th>Data e Hora</th>
@@ -243,13 +237,12 @@ def gerar_html(documento):
                 <td>{2}</td>
                 <td>{3}</td>
                 <td>{4}</td>
-                <td>{5}</td>
             </tr>
         </table>
         <button onclick="window.print()">Imprimir</button> <!-- Botão para imprimir -->
     </body>
     </html>
-    '''.format(documento['numero'], documento['nome'], documento['sobrenome'], documento['valor pago'],
+    '''.format(documento['numero'], documento['nome'], documento['valor pago'],
                documento['valor recebido'], documento['data e hora'])
 
     return html
@@ -270,7 +263,9 @@ def gerar_html_file(html, file_path):
 
 def gerar_html_and_confirm(documento):
     directory = 'Comprovante'  # Diretório onde o arquivo será salvo
-    file_name = 'operacao.html'
+    cpf = documento['numero']  # CPF do cliente
+    data_hora = documento['data e hora'].strftime("%Y-%m-%d_%H-%M-%S")  # Data e hora da operação
+    file_name = f'operacao_{cpf}_{data_hora}.html'  # Nome do arquivo com CPF e data/hora
     file_path = os.path.join(directory, file_name)
 
     html = gerar_html(documento)
@@ -280,6 +275,7 @@ def gerar_html_and_confirm(documento):
     result = messagebox.askquestion("Confirmação", "Deseja imprimir o comprovante ?")
     if result == 'yes':
         return open_html_file()
+    
 
 
 # ------------------------------- Atualizar -------------------------------------------------------------------------
@@ -374,7 +370,7 @@ btMt = Button(janela, text='Calcular', bd=1, relief='solid', width=2, command=la
 btMt.place(x=190, y=170)
 btMt.grid(row=0, column=2, sticky="nsew")
 
-btn_cliente = Button(janela, text='Vendas Realizadas', width=2, bd=1, relief='solid', command=lambda: calcular_soma_valores(['valor pago']))
+btn_cliente = Button(janela, text='Total Vendas', width=2, bd=1, relief='solid', command=lambda: calcular_soma_valores(['valor pago']))
 btn_cliente.place(x=235, y=170)
 btn_cliente.grid(row=0, column=3, sticky="nsew")
 
@@ -389,7 +385,11 @@ btn_atualizar.grid(row=6, column=3, sticky="nsew")
 
 btn_atualizar = Button(janela, text='Comprovante', width=2, bd=1, relief='solid', command=lambda:open_html_file())
 btn_atualizar.place(x=280, y=170)
-btn_atualizar.grid(row=7, column=3, sticky="nsew")
+btn_atualizar.grid(row=2, column=2, sticky="nsew")
+
+btn_cliente = Button(janela, text='Vendas Realizadas', width=2, bd=1, relief='solid', command=lambda: create_table())
+btn_cliente.place(x=235, y=170)
+btn_cliente.grid(row=2, column=3, sticky="nsew")
 
 # Botão Limpar
 def limpar_info():
@@ -397,7 +397,6 @@ def limpar_info():
     caixa1.delete(0, END)
     caixa2.delete(0, END)
     nome_.delete(0, END)
-    sobre_n.delete(0, END)
     numero_.delete(0, END)
     vlr_receber['text'] = '-------------'
     calc['text'] = '-------------'
@@ -405,7 +404,7 @@ def limpar_info():
 
 btn_limpar = Button(janela, text='Limpar', width=10, bd=1, relief='solid' ,command=limpar_info)
 btn_limpar.place(x=200, y=170)
-btn_limpar.grid(row=5, column=2, sticky="nsew")
+btn_limpar.grid(row=1, column=2, sticky="nsew")
 
 
 janela.mainloop()

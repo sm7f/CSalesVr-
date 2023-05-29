@@ -1,72 +1,61 @@
-import pdfkit
+import tkinter as tk
+from tkinter import ttk
 from pymongo import MongoClient
 from datetime import datetime
 
-def bt_Mt(vlr_receber, calc):
-    try:
-        n1 = float(caixa1.get())
-        n2 = float(caixa2.get())
-        valor = n1 * (n2 / 100)
-        calc_value = "${:.2f}".format(n1 - valor)
-        calc['text'] = calc_value
-        vlr_receber_value = "${:.2f}".format(valor)
-        vlr_receber['text'] = vlr_receber_value
-        return valor, float(calc_value[1:])
-    except ValueError:
-        calc['text'] = valor_pop()
-        vlr_receber['text'] = valor_pop()
-        return None, None
+def create_table():
+    root = tk.Tk()
+    root.title("Vendas")
 
-def cd_cliente(vlr_receber, calc):
-    try:
-        # Conectar ao banco de dados
-        client = MongoClient('mongodb://localhost:27017/')  # Insira o host e a porta do MongoDB
+    # Criar Treeview
+    table = ttk.Treeview(root)
 
-        # Selecionar o banco de dados
+    # Definir as colunas da tabela
+    table['columns'] = ('numero', 'nome', 'valor pago', 'valor recebido', 'data e hora')
+
+    # Formatar as colunas
+    table.column('#0', width=0, stretch=tk.NO)  # Coluna vazia para indentação
+    table.column('numero', anchor=tk.CENTER, width=80)
+    table.column('nome', anchor=tk.W, width=150)
+    table.column('valor pago', anchor=tk.CENTER, width=100)
+    table.column('valor recebido', anchor=tk.CENTER, width=120)
+    table.column('data e hora', anchor=tk.CENTER, width=150)
+
+    # Cabeçalho das colunas
+    table.heading('#0', text='', anchor=tk.W)
+    table.heading('numero', text='CPF', anchor=tk.CENTER)
+    table.heading('nome', text='Nome', anchor=tk.W)
+    table.heading('valor pago', text='Valor Pago', anchor=tk.CENTER)
+    table.heading('valor recebido', text='Valor Recebido', anchor=tk.CENTER)
+    table.heading('data e hora', text='Data e Hora', anchor=tk.CENTER)
+
+    try:
+        # Conectar-se ao banco de dados MongoDB
+        client = MongoClient('mongodb://localhost:27017/')
         db = client['DataBase']  # Insira o nome do banco de dados
+        vendas_collection = db['Vendas']  # Insira o nome da coleção
 
-        # Selecionar a coleção
-        colecao = db['DataBase']  # Insira o nome da coleção
+        # Consultar todas as vendas
+        vendas = vendas_collection.find()
 
-        nro = numero_.get()
-        n3 = nome_.get()
-        n4 = sobre_n.get()
-
-        data_hora_atual = datetime.now()
-
-        # Obter os valores de 'valor pago' e 'valor recebido' usando a função bt_Mt()
-        valor_pago, valor_recebido = bt_Mt(vlr_receber, calc)  # Passando os argumentos
-
-        if valor_pago is not None and valor_recebido is not None:
-            # Criar um documento com os dados
-            documento = {
-                'numero': nro,
-                'nome': n3,
-                'sobrenome': n4,
-                'valor pago': valor_pago,
-                'valor recebido': valor_recebido,
-                'data e hora': data_hora_atual
-
-            }
-
-            # Inserir o documento na coleção
-            resultado = colecao.insert_one(documento)
-
-            if resultado.inserted_id:
-                gravar_pop()
-
-                # Gerar PDF da operação
-                gerar_pdf(documento)
-
-            else:
-                inserir_pop()
-        else:
-            valor_pop()
+        # Adicionar linhas à tabela com base nos dados de vendas
+        for venda in vendas:
+            table.insert('', tk.END, text='',
+                         values=(
+                             venda['numero'],
+                             venda['nome'],
+                             venda['valor pago'],
+                             venda['valor recebido'],
+                             venda['data e hora'].strftime('%Y-%m-%d %H:%M:%S')
+                         ))
 
     except Exception as e:
         print('Erro durante a conexão ou operação:', e)
 
+    # Exibir a tabela
+    table.pack()
 
-btn_cliente = Button(janela, text='Vender', width=2, bd=1, relief='solid', command=lambda: cd_cliente(vlr_receber, calc))
-btn_cliente.place(x=235, y=170)
-btn_cliente.grid(row=5, column=3, sticky="nsew")
+    root.mainloop()
+
+# Chame a função para criar a tabela
+create_table()
