@@ -10,7 +10,7 @@ import pdfkit
 import os
 import subprocess
 import webbrowser
-from component_function import open_html_file, create_table,create_table
+from component_function import open_html_file, create_table,create_table,cd_produo
 
 
 
@@ -45,10 +45,10 @@ nome_t = Label(janela, text='Nome Cliente', bd=1, relief='solid', padx=5, pady=5
 nome_t.place(x=50, y=70)  # Posição
 nome_t.grid(row=5, column=0, sticky="nsew")
   
-numero_t = Label(janela, text='Número', bd=1, relief='solid', padx=5, pady=5)
+numero_t = Label(janela, text='CPF', bd=1, relief='solid', padx=5, pady=5)
 numero_t.place(x=50, y=70)  # Posição
-numero_t.grid(row=7, column=0, sticky="nsew")  
-
+numero_t.grid(row=5, column=1, sticky="nsew")
+  
 space = Label(janela, text='    ',bg='dim gray') 
 space.place(x=200, y=70)  # Posição
 space.grid(row=4, column=0, sticky="nsew") 
@@ -70,7 +70,7 @@ caixa2.grid(row=1, column=1, sticky="nsew", padx=1, pady=1)
 
 
 numero_ = Entry(janela, justify="center")  # Display 2
-numero_.grid(row=9, column=0, sticky="nsew", padx=1, pady=1)
+numero_.grid(row=6, column=1, sticky="nsew", padx=1, pady=1)
 
 nome_ = Entry(janela, justify="center")  # Display 2
 nome_.place(x=50, y=70)  # Posição
@@ -357,14 +357,15 @@ def atualizar_cliente(vlr_receber, calc):
         print('Ocorreu um erro:', str(e))
 
 
-btn_cliente = Button(janela, text='Vender', width=2, bd=1, relief='solid', command=vender)
-btn_cliente.place(x=235, y=170)
-btn_cliente.grid(row=5, column=3, sticky="nsew")
 
 
 
 # ----------------------------- Botões -----------------------------------------------------------------------------------
 # atribuindo função aos botões
+
+btn_cliente = Button(janela, text='Vender', width=2, bd=1, relief='solid', command=vender)
+btn_cliente.place(x=235, y=170)
+btn_cliente.grid(row=5, column=3, sticky="nsew")
 
 btMt = Button(janela, text='Calcular', bd=1, relief='solid', width=2, command=lambda: bt_Mt(vlr_receber, calc))
 btMt.place(x=190, y=170)
@@ -373,6 +374,10 @@ btMt.grid(row=0, column=2, sticky="nsew")
 btn_cliente = Button(janela, text='Total Vendas', width=2, bd=1, relief='solid', command=lambda: calcular_soma_valores(['valor pago']))
 btn_cliente.place(x=235, y=170)
 btn_cliente.grid(row=0, column=3, sticky="nsew")
+
+open_produto = Button(janela, text='Cadastrar Produto', width=2, bd=1, relief='solid', command=lambda: cd_produo())
+open_produto.place(x=235, y=170)  # Posição
+open_produto.grid(row=7, column=3, sticky="nsew")
 
 
 btn_relatorio = Button(janela, text='Relatório', width=2, bd=1, relief='solid', command=mostragrafico)
